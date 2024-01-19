@@ -55,9 +55,6 @@ export const RegisterForm = () => {
             backButtonHref="/auth/login"
             showSocial
         >
-            <CardHeader>
-                <Header label="Sign in to your account" />
-            </CardHeader>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <div className="space-y-4">

@@ -21,8 +21,14 @@ import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
 import { useState, useTransition } from "react";
 import { login } from "@/actions/login";
+import { useSearchParams } from "next/navigation";
 
 export const LoginForm = () => {
+    const searchParams = useSearchParams();
+    const urlErrorMessage = searchParams.get("error") === "OAuthAccountNotLinked" ?
+        "Email already in use with another provider!" :
+        "";
+
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
@@ -41,8 +47,9 @@ export const LoginForm = () => {
         startTransition(() => {
             login(values)
                 .then((data) => {
-                    setError(data.error);
-                    setSuccess(data.success);
+                    setError(data?.error ?? "");
+                    // setSuccess(data?.success ?? "");
+                    // TODO: Add when 2FA is implemented
                 })
         })
     }
@@ -54,9 +61,6 @@ export const LoginForm = () => {
             backButtonHref="/auth/register"
             showSocial
         >
-            <CardHeader>
-                <Header label="Sign in to your account" />
-            </CardHeader>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <div className="space-y-4">
@@ -87,7 +91,7 @@ export const LoginForm = () => {
                             )}
                         />
                     </div>
-                    <FormError message={error} />
+                    <FormError message={error || urlErrorMessage} />
                     <FormSuccess message={success} />
                     <Button type="submit" disabled={isPending} className="w-full">Submit</Button>
                 </form>
