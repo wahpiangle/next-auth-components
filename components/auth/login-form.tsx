@@ -1,9 +1,7 @@
 "use client";
 
 import { LoginSchema } from "@/schemas"
-import { CardHeader } from "../ui/card"
 import { CardWrapper } from "./card-wrapper"
-import { Header } from "./header"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -48,7 +46,7 @@ export const LoginForm = () => {
             login(values)
                 .then((data) => {
                     setError(data?.error ?? "");
-                    // setSuccess(data?.success ?? "");
+                    setSuccess(data?.success ?? "");
                     // TODO: Add when 2FA is implemented
                 })
         })
