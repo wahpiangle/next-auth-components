@@ -51,3 +51,12 @@ model VerficationToken {
 
   @@unique([email, token]) // only one token per email
 }
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token]) // only one token per email
+}
