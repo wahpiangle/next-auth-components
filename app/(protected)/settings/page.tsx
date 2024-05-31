@@ -1,14 +1,22 @@
-import { auth, signOut } from "@/auth"
+"use client"
+import { logout } from "@/actions/logout";
+import { useCurrentUser } from "@/hooks/use-current-user"
 
-const SettingsPage = async () => {
-    const session = await auth();
+const SettingsPage = () => {
+    const { user, status } = useCurrentUser();
+    const onSignOut = () => {
+        logout();
+    }
     return (
-        <form action={
-            async () => {
-                "use server"
-                await signOut()
-            }}>
-            <button type="submit">Sign Out</button>
+        <form>
+            {
+                status === 'loading' ?
+                    <p>Loading...</p>
+                    :
+                    <p>{user?.email}</p>
+            }
+
+            <button onClick={onSignOut} type="submit">Sign Out</button>
         </form >
     )
 }
