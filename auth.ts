@@ -4,6 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "./lib/db";
 import { getUserById } from "./data/user";
 import { UserRole } from "@prisma/client";
+import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 
 export const {
     handlers: { GET, POST },
@@ -25,12 +26,27 @@ export const {
     },
     callbacks: {
         async signIn({ user, account }) {
+            // If the user is signing in with a provider other than credentials, allow it
             if (account?.provider !== "credentials") return true;
 
+            // Otherwise, email needs to be verified
             const existingUser = await getUserById(user.id as string);
             if (!existingUser || !existingUser.emailVerified) return false;
 
-            // TODO: 2FA
+            if (existingUser.isTwoFactorEnabled) {
+
+                const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(user.id as string);
+
+                // checks if user has cleared the 2FA check 
+                if (!twoFactorConfirmation) return false;
+
+                // delete two factor confirmation for next sign in
+                await db.twoFactorConfirmation.delete({
+                    where: {
+                        id: twoFactorConfirmation.id
+                    }
+                });
+            }
 
             return true;
         },
