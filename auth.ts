@@ -50,7 +50,6 @@ export const {
 
             return true;
         },
-        // @ts-expect-error
         async session({ session, token }) {
             if (token.sub && session.user) {
                 session.user.id = token.sub;
@@ -59,6 +58,11 @@ export const {
             if (token.role && session.user) {
                 session.user.role = token.role as UserRole;
             }
+
+            if (token.isTwoFactorEnabled && session.user) {
+                session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+            }
+
             return session;
         },
         async jwt({ token }) {
@@ -69,6 +73,7 @@ export const {
             if (!existingUser) return token;
 
             token.role = existingUser.role;
+            token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
             return token;
         },
 

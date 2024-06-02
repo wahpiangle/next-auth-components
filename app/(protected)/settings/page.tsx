@@ -1,14 +1,14 @@
 "use client"
-import { useCurrentUser } from "@/hooks/use-current-user"
+
+import { logout } from "@/actions/logout"
 
 const SettingsPage = () => {
-    const { user, status } = useCurrentUser();
-
+    const handleLogout = () => {
+        logout();
+    }
     return (
         <div className="bg-white p-10 rounded-xl">
-            <form>
-                <button type="submit">Sign Out</button>
-            </form >
+            <button onClick={handleLogout}>Log out</button>
         </div>
     )
 }
